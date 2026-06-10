@@ -1,14 +1,12 @@
 {
   "name": "yes-you-can-adblocker",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Adblocker that replaces blocked ads with billboard affirmations. Fork of the They Live adblocker / uBlock Origin Lite.",
+  "private": true,
+  "license": "GPL-3.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "verify": "node tools/verify.mjs"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
