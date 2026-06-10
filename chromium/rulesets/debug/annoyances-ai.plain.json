@@ -1,0 +1,68 @@
+[
+  {
+    "condition": {
+      "urlFilter": "||asus-brand-assistant.asus.com/brand-assistant.js"
+    },
+    "action": {
+      "type": "block"
+    },
+    "priority": 10,
+    "id": 1
+  },
+  {
+    "condition": {
+      "urlFilter": "||mfgpt.milanofinanza.it/widget/widget.js"
+    },
+    "action": {
+      "type": "block"
+    },
+    "priority": 10,
+    "id": 2
+  },
+  {
+    "condition": {
+      "requestDomains": [
+        "chat.g4media.org",
+        "embed.chatnode.ai"
+      ]
+    },
+    "action": {
+      "type": "block"
+    },
+    "priority": 10,
+    "id": 3
+  },
+  {
+    "condition": {
+      "urlFilter": "||azurefd.net/cdns/copilot_v3.min.js",
+      "initiatorDomains": [
+        "nus.edu.sg"
+      ],
+      "resourceTypes": [
+        "script"
+      ]
+    },
+    "action": {
+      "type": "block"
+    },
+    "priority": 10,
+    "id": 4
+  },
+  {
+    "condition": {
+      "requestDomains": [
+        "askmiso.com",
+        "cdn.gist.ai",
+        "gotolstoy.com",
+        "widget.kapa.ai",
+        "widget.prod.equally.ai"
+      ],
+      "domainType": "thirdParty"
+    },
+    "action": {
+      "type": "block"
+    },
+    "priority": 10,
+    "id": 5
+  }
+]
