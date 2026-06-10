@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "uBlock Origin Lite",
+    "message": "Yes You Can Adblocker",
     "description": "extension name."
   },
   "extShortDesc": {
-    "message": "ಅನುಮತಿ-ಕಡಿಮೆ ವಿಷಯ ಬ್ಲಾಕರ್. ಅನುಸ್ಥಾಪನೆಯ ತಕ್ಷಣವೇ ಜಾಹೀರಾತುಗಳು, ಟ್ರ್ಯಾಕರ್‌ಗಳು, ಗಣಿಗಾರರು ಮತ್ತು ಹೆಚ್ಚಿನದನ್ನು ನಿರ್ಬಂಧಿಸುತ್ತದೆ.",
+    "message": "Replaces blocked ads with billboard affirmations instead of hiding them. A fork of uBlock Origin Lite.",
     "description": "this will be in the Chrome web store: must be 132 characters or less"
   },
   "perRulesetStats": {

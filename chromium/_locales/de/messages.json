@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "uBlock Origin Lite",
+    "message": "Yes You Can Adblocker",
     "description": "extension name."
   },
   "extShortDesc": {
-    "message": "Ein effizienter Inhaltsblocker. Blockiert Werbung, Tracker und mehr sofort nach der Installation.",
+    "message": "Replaces blocked ads with billboard affirmations instead of hiding them. A fork of uBlock Origin Lite.",
     "description": "this will be in the Chrome web store: must be 132 characters or less"
   },
   "perRulesetStats": {

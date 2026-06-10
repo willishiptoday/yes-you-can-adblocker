@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "uBlock Origin Lite",
+    "message": "Yes You Can Adblocker",
     "description": "extension name."
   },
   "extShortDesc": {
-    "message": "අවසර අනවශ්‍ය අන්තර්ගත අවහිරකය. ස්ථාපනය කළ වහාම දැන්වීම්, ලුහුබැඳීම්, කැණීම් සහ තවත් දෑ අවහිර කරයි.",
+    "message": "Replaces blocked ads with billboard affirmations instead of hiding them. A fork of uBlock Origin Lite.",
     "description": "this will be in the Chrome web store: must be 132 characters or less"
   },
   "perRulesetStats": {

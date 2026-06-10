@@ -27,14 +27,22 @@ if ( self.ProceduralFiltererAPI !== undefined ) {
     if ( self.ProceduralFiltererAPI instanceof Promise === false ) { return; }
 }
 
-// They Live fork: this file is sometimes injected standalone (via
+// Yes You Can fork: this file is sometimes injected standalone (via
 // injectCSSProceduralAPI), so self.theyLiveStyleDecl may not be present.
 // Inline fallback. Kept in sync with /js/scripting/they-live.js.
 const theyLiveStyleDecl = self.theyLiveStyleDecl || (() => {
     const PHRASES = [
-        'OBEY', 'CONSUME', 'WATCH TV', 'SLEEP',
-        'NO INDEPENDENT THOUGHT', 'SUBMIT', 'CONFORM', 'STAY ASLEEP',
-        'BUY', 'WORK', 'DO NOT QUESTION AUTHORITY',
+        'PERFECT PHYSIQUE', '$10,000,000', 'YOU ARE A BEAUTIFUL WOMAN',
+        'WHAT IF IT\'S EASY?', 'IT\'S ALREADY YOURS', 'ACT AS IF',
+        'EVERYTHING WORKS OUT FOR ME', 'ABUNDANCE', 'MONEY LOVES ME',
+        'THE UNIVERSE IS LISTENING', 'SPEAK IT INTO EXISTENCE',
+        'MAIN CHARACTER ENERGY', 'YOU ARE MAGNETIC', 'IT IS DONE',
+        'DREAM JOB INCOMING', 'SOFT LIFE', 'FIRST CLASS ONLY', 'GLOW UP',
+        'HIGH VIBRATIONS ONLY', 'REJECTION IS REDIRECTION',
+        'GRATEFUL IN ADVANCE', 'BORN TO WIN', 'WEALTH FINDS ME',
+        'ASSUME SUCCESS', 'YOU WOKE UP LUCKY', 'RECEIVE', 'BELIEVE HARDER',
+        'YOUR FUTURE SELF THANKS YOU', 'NOTHING IS OUT OF REACH',
+        'I AM THE PRIZE',
     ];
     const hashStr = (s) => {
         let h = 0;

@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "uBlock Origin Lite",
+    "message": "Yes You Can Adblocker",
     "description": "extension name."
   },
   "extShortDesc": {
-    "message": "효율적인 콘텐츠 차단기입니다. 설치 즉시 광고, 추적기, 암호화폐 채굴기 등을 차단합니다.",
+    "message": "Replaces blocked ads with billboard affirmations instead of hiding them. A fork of uBlock Origin Lite.",
     "description": "this will be in the Chrome web store: must be 132 characters or less"
   },
   "perRulesetStats": {

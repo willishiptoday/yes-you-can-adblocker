@@ -1,9 +1,10 @@
 /*******************************************************************************
 
-    uBO Lite "They Live" fork — replaces cosmetically-hidden ad elements with
-    a white box bearing slogans from John Carpenter's 1988 film.
+    "Yes You Can" fork — replaces cosmetically-hidden ad elements with a
+    white billboard tile bearing a motivational / manifestation affirmation.
 
-    See: https://proceduralgraphics.blogspot.com/2015/04/they-live-adblock-mode.html
+    Mechanic inherited from the They Live adblocker fork of uBO Lite:
+    https://github.com/davmlaw/they_live_adblocker
 
     This file MUST run before css-specific.js, css-generic.js, and any other
     consumer that expects self.theyLiveCss / self.theyLiveAssign /
@@ -14,17 +15,36 @@
 (function uBOL_theyLive() {
 
 const PHRASES = [
-    'OBEY',
-    'CONSUME',
-    'WATCH TV',
-    'SLEEP',
-    'NO INDEPENDENT THOUGHT',
-    'SUBMIT',
-    'CONFORM',
-    'STAY ASLEEP',
-    'BUY',
-    'WORK',
-    'DO NOT QUESTION AUTHORITY',
+    'PERFECT PHYSIQUE',
+    '$10,000,000',
+    'YOU ARE A BEAUTIFUL WOMAN',
+    'WHAT IF IT\'S EASY?',
+    'IT\'S ALREADY YOURS',
+    'ACT AS IF',
+    'EVERYTHING WORKS OUT FOR ME',
+    'ABUNDANCE',
+    'MONEY LOVES ME',
+    'THE UNIVERSE IS LISTENING',
+    'SPEAK IT INTO EXISTENCE',
+    'MAIN CHARACTER ENERGY',
+    'YOU ARE MAGNETIC',
+    'IT IS DONE',
+    'DREAM JOB INCOMING',
+    'SOFT LIFE',
+    'FIRST CLASS ONLY',
+    'GLOW UP',
+    'HIGH VIBRATIONS ONLY',
+    'REJECTION IS REDIRECTION',
+    'GRATEFUL IN ADVANCE',
+    'BORN TO WIN',
+    'WEALTH FINDS ME',
+    'ASSUME SUCCESS',
+    'YOU WOKE UP LUCKY',
+    'RECEIVE',
+    'BELIEVE HARDER',
+    'YOUR FUTURE SELF THANKS YOU',
+    'NOTHING IS OUT OF REACH',
+    'I AM THE PRIZE',
 ];
 
 const ATTR = 'data-ubol-they-live';
@@ -43,8 +63,7 @@ const MASK_BLOCK = `{
 }`;
 
 // Styles common to every ::after overlay. Content comes from the data
-// attribute set by theyLiveAssign; untagged elements fall back to OBEY via a
-// separate rule below.
+// attribute set by theyLiveAssign.
 const AFTER_STYLE = `
     position: absolute !important;
     inset: 0 !important;
