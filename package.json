@@ -8,6 +8,7 @@
     "assets": "node tools/store-assets.mjs",
     "icons": "node tools/make-icons.mjs",
     "pack": "node tools/pack.mjs",
+    "test:features": "node tools/test-features.mjs",
     "verify": "node tools/verify.mjs"
   },
   "devEngines": {

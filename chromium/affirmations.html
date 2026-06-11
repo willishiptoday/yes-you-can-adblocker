@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customize — Yes You Can</title>
+<link rel="stylesheet" href="css/affirmations.css">
+</head>
+<body>
+
+<header class="hero">
+    <div class="wordmark">YES YOU CAN<span>ADBLOCKER</span></div>
+    <div class="counter" id="counter">
+        <span class="count" id="count">0</span>
+        <span class="count-label">ads manifested</span>
+    </div>
+</header>
+
+<main>
+    <section class="card preview-card">
+        <div class="billboard" id="preview"><span id="previewText">ACT AS IF</span></div>
+        <button id="reroll" class="btn-primary" type="button">🎲 Re-roll every open tab</button>
+        <p class="hint" id="rerollHint">Deals a fresh affirmation to every ad slot on all your open pages.</p>
+    </section>
+
+    <section class="card">
+        <h2>Theme</h2>
+        <p class="hint">How the billboards look where ads used to be.</p>
+        <div class="themes" id="themes"></div>
+    </section>
+
+    <section class="card">
+        <h2>Packs</h2>
+        <p class="hint">Pick the affirmation packs you want in rotation.</p>
+        <div class="packs" id="packs"></div>
+    </section>
+
+    <section class="card">
+        <h2>Your own affirmations</h2>
+        <p class="hint">One per line. These get mixed in with the packs above.</p>
+        <textarea id="custom" rows="6" spellcheck="false"
+            placeholder="I AM BOOKED AND BUSY&#10;TODAY IS MY DAY&#10;…"></textarea>
+        <div class="status" id="status">Saved</div>
+    </section>
+
+    <footer class="foot">
+        Yes You Can Adblocker · settings sync across your Chrome ·
+        <a href="https://github.com/willishiptoday/yes-you-can-adblocker" target="_blank" rel="noreferrer">source</a>
+    </footer>
+</main>
+
+<script src="js/affirmations.js" type="module"></script>
+</body>
+</html>

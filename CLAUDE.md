@@ -46,18 +46,39 @@ instead masks the element white and overlays a random affirmation. All of the
 fork-specific logic lives in:
 
 - **`chromium/js/scripting/they-live.js`** — the heart of the fork. Defines the
-  `PHRASES` list and three globals on `self`:
-  - `theyLiveCss(selectorList)` — returns CSS that masks matched elements (white
-    box + black border) and adds an `::after` overlay whose `content` is read
-    from the `data-ubol-they-live` attribute.
+  `PACKS` (affirmations grouped into themed sets) and `THEMES` maps, and three
+  globals on `self`:
+  - `theyLiveCss(selectorList)` — returns CSS that masks matched elements (a
+    themed tile + border) plus, once, an `[data-ubol-they-live]::after` overlay
+    base and **one background-image rule per active phrase** (CSS can't read an
+    attribute into a `background-image`, so each phrase gets its own
+    `[…="PHRASE"]::after { background-image: <svg> }` rule). The phrase SVG is
+    self-bounding (viewBox fits the text, long phrases balance onto two lines)
+    and drawn `background-size: contain`, so text scales to any slot without
+    overflowing. **Don't reintroduce viewport-relative font sizes** — that made
+    small slots clip.
   - `theyLiveAssign(selectorList)` — walks the DOM tagging matched elements with
-    a random phrase, and installs a single `MutationObserver` so late-loaded ad
-    containers get tagged when they appear (the one-shot `css-specific.js` pass
-    at `document_idle` would otherwise miss them).
+    a random phrase from the active set, and installs a single `MutationObserver`
+    so late-loaded ad containers get tagged when they appear (the one-shot
+    `css-specific.js` pass at `document_idle` would otherwise miss them).
   - `theyLiveStyleDecl(seed)` — for the procedural-CSS pipeline, which can't emit
-    pseudo-elements; renders the phrase as an inline-SVG `background-image`
-    instead. `seed` makes the phrase deterministic per selector.
-- **Call sites** that consume those globals:
+    pseudo-elements; paints the themed phrase SVG straight onto the element as a
+    `background-image`. `seed` makes the phrase deterministic per selector.
+  - It also reads user settings from `chrome.storage.sync` (`yyc_settings`:
+    active packs, custom phrases, theme), re-themes/re-tags live on
+    `storage.onChanged`, handles a `{cmd:'yyc-reroll'}` runtime message, and
+    increments a `chrome.storage.local` counter (`yyc_count`). It runs in the
+    ISOLATED world (registered content script, no `world` set), so those APIs
+    are available. Everything degrades to the classic look if storage is absent.
+- **Control panel (fork UI, not vendored):**
+  - `chromium/affirmations.html` + `chromium/js/affirmations.js` +
+    `chromium/css/affirmations.css` — packs/themes/custom/re-roll, reads & writes
+    `yyc_settings` / `yyc_count`. Pack & theme display metadata is mirrored here
+    from `they-live.js` (keep in sync).
+  - `chromium/js/yyc-popup.js` + 2 buttons added to `chromium/popup.html` — the
+    "✨ Customize" / "🎲 Re-roll this page" entry points. uBOL's `popup.js` is
+    untouched.
+- **Call sites** that consume the scripting globals:
   - `chromium/js/scripting/css-specific.js` — `cssAPI.insert(theyLiveCss(...))` + `theyLiveAssign(...)`
   - `chromium/js/scripting/css-generic.js` (~line 191) — same pair
   - `chromium/js/scripting/css-procedural-api.js` (~lines 33, 641, 855) — uses `theyLiveStyleDecl`
@@ -70,9 +91,13 @@ fork-specific logic lives in:
 - **The `data-ubol-they-live` attribute name is duplicated** in `they-live.js`
   (`ATTR`) and `tools/verify.mjs` (`ATTR`). Change both together or verify
   breaks silently.
-- **`css-procedural-api.js` carries an inline fallback copy of `theyLiveStyleDecl`**
-  (~line 33, for when the global isn't present in that injection context). Keep
-  it in sync with `they-live.js`.
+- **`css-procedural-api.js` carries an inline fallback copy** of the phrase-SVG
+  builder + `theyLiveStyleDecl` (~line 33, for when the global isn't present in
+  that injection context). Keep its `svgUrl`/`layoutLines` in sync with
+  `they-live.js`'s `theyLiveSvgUrl` (the fallback stays classic-themed).
+- **`tools/test-features.mjs`** (`pnpm test:features`) drives `chrome.storage`
+  from the service worker to assert custom phrases + themes apply, re-roll
+  changes phrases, and the counter increments. Run it after touching settings.
 - Only **cosmetically-filtered** ads become affirmations. Network-blocked ads
   (the bulk of uBOL's blocking, via `declarativeNetRequest` rulesets) never
   produce a DOM element, so there's nothing to replace. Default filtering mode
@@ -85,5 +110,6 @@ Everything else under `chromium/` is Raymond Hill's uBOL, largely unmodified:
 the `rulesets/` + `_metadata/` declarativeNetRequest data, `_locales/`, the
 dashboard/popup/picker UI, and the static-filtering parsers. Avoid editing these
 unless a change genuinely belongs in the blocking engine — prefer to confine
-fork behavior to the four files above. The whole project is GPL-3.0 (same as
+fork behavior to the files listed above (the scripting globals, the control
+panel, and the two-line popup hook). The whole project is GPL-3.0 (same as
 upstream); preserve the existing license headers.

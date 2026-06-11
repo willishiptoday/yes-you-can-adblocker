@@ -159,5 +159,25 @@ await render(128, 128,
      </div>`,
     'store-icon-128.png', { omitBackground: true });
 
+// ---- Control-panel screenshot (showcases customization) ----
+{
+    const id = new URL(worker.url()).host;
+    await worker.evaluate(() => new Promise(r => chrome.storage.local.set({ yyc_count: 12480 }, r)));
+    await worker.evaluate(() => new Promise(r => chrome.storage.sync.set({ yyc_settings: {
+        packs: { wealth: true, beauty: true, confidence: true, calm: true, career: false, petty: true },
+        custom: [ 'I AM BOOKED AND BUSY', 'TODAY IS MY DAY' ], theme: 'classic',
+    } }, r)));
+    const p = await context.newPage();
+    await p.setViewportSize({ width: 1280, height: 800 });
+    await p.goto(`chrome-extension://${id}/affirmations.html`, { waitUntil: 'load' });
+    await p.waitForTimeout(1000);
+    await p.screenshot({
+        path: path.join(OUT_DIR, 'screenshot-4-customize.jpg'),
+        type: 'jpeg', quality: 92, clip: { x: 0, y: 0, width: 1280, height: 800 },
+    });
+    await p.close();
+    console.log('  screenshot-4-customize.jpg');
+}
+
 await context.close();
 console.log('store assets written to docs/store/');

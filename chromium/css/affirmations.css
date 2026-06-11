@@ -1,0 +1,225 @@
+/* Yes You Can Adblocker — control panel. Billboard aesthetic: white, black,
+   Impact, hard borders. Self-contained (not part of the vendored uBOL UI). */
+
+:root {
+    --ink: #000;
+    --paper: #fff;
+    --line: #000;
+    --muted: #666;
+    --accent: #000;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #f4f4f4;
+    color: var(--ink);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.hero {
+    background: #000;
+    color: #fff;
+    padding: 26px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.wordmark {
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-weight: 900;
+    font-size: 34px;
+    letter-spacing: 0.02em;
+    line-height: 0.92;
+    text-transform: uppercase;
+}
+.wordmark span {
+    display: block;
+    font-family: 'Arial Black', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.32em;
+    margin-top: 6px;
+}
+
+.counter { text-align: right; line-height: 1; }
+.count {
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-size: 40px;
+    display: block;
+}
+.count-label {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #bdbdbd;
+}
+
+main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 20px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card {
+    background: var(--paper);
+    border: 3px solid var(--line);
+    border-radius: 6px;
+    padding: 22px;
+}
+.card h2 {
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 22px;
+    margin: 0 0 4px;
+}
+.hint { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
+
+/* ---- Preview + re-roll ---- */
+.preview-card { text-align: center; }
+.billboard {
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--line);
+    border-radius: 4px;
+    background: var(--paper);
+    margin-bottom: 16px;
+    overflow: hidden;
+    padding: 12px;
+}
+.billboard span {
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    font-size: clamp(22px, 5vw, 44px);
+    line-height: 1.04;
+    text-align: center;
+}
+
+.btn-primary {
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    background: #000;
+    color: #fff;
+    border: 3px solid #000;
+    border-radius: 4px;
+    padding: 12px 22px;
+    cursor: pointer;
+    transition: transform .06s ease, background .15s ease;
+}
+.btn-primary:hover { background: #222; }
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary:disabled { opacity: .5; cursor: default; }
+
+/* ---- Themes ---- */
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: 12px; }
+.theme {
+    border: 3px solid transparent;
+    border-radius: 6px;
+    padding: 3px;
+    cursor: pointer;
+    background: none;
+}
+.theme.sel { border-color: #000; }
+.theme .swatch {
+    height: 64px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-size: 20px;
+    text-transform: uppercase;
+}
+.theme .name {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 6px;
+    color: #444;
+}
+
+/* ---- Packs ---- */
+.packs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.pack {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color .12s ease, background .12s ease;
+}
+.pack.on { border-color: #000; background: #fafafa; }
+.pack .box {
+    width: 22px; height: 22px; flex: 0 0 22px;
+    border: 2px solid #000; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; color: #000;
+}
+.pack.on .box { background: #000; color: #fff; }
+.pack .meta { line-height: 1.2; }
+.pack .meta b {
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-weight: 900; font-size: 15px; letter-spacing: 0.03em; text-transform: uppercase;
+    display: block;
+}
+.pack .meta small { color: var(--muted); font-size: 12px; }
+
+/* ---- Custom + status ---- */
+textarea {
+    width: 100%;
+    border: 2px solid #000;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    resize: vertical;
+    text-transform: uppercase;
+}
+.status {
+    margin-top: 10px;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #0a0;
+    opacity: 0;
+    transition: opacity .2s ease;
+}
+.status.show { opacity: 1; }
+
+.foot { text-align: center; color: #999; font-size: 12px; }
+.foot a { color: #555; }
+
+@media (prefers-color-scheme: dark) {
+    body { background: #161616; color: #eee; }
+    .card { background: #000; border-color: #fff; }
+    .card h2, .billboard span { color: #fff; }
+    .billboard { border-color: #fff; }
+    .pack { border-color: #444; }
+    .pack.on { background: #111; border-color: #fff; }
+    .pack .box { border-color: #fff; color: #fff; }
+    .pack.on .box { background: #fff; color: #000; }
+    .theme.sel { border-color: #fff; }
+    textarea { background: #111; color: #eee; border-color: #fff; }
+    .hint, .pack .meta small { color: #999; }
+}

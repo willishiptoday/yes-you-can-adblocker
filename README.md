@@ -41,6 +41,24 @@ The default filtering mode is **Optimal**, so affirmation tiles work out of the
 box. For even more affirmations per page, open the extension's dashboard
 (toolbar icon → ⚙) and set sites you care about to **Complete**.
 
+## Customize
+
+Click the toolbar icon → **✨ Customize** to open the control panel
+([affirmations.html](chromium/affirmations.html)):
+
+- **Packs** — toggle which themed sets are in rotation: Wealth, Beauty,
+  Confidence, Calm, Career, and an off-by-default **Petty** pack.
+- **Your own affirmations** — type your own lines; they mix into the rotation.
+- **Themes** — restyle the billboards: Classic (black on white), Soft, Noir,
+  Gold, Vapor.
+- **Re-roll** — deal a fresh affirmation to every ad slot on a page (also on the
+  popup as “🎲 Re-roll this page”).
+- A lifetime **“ads manifested”** counter tallies every tile painted.
+
+Settings live in `chrome.storage.sync`, so they follow you across Chrome. The
+content script reads them live — changes re-theme and re-tag open pages without
+a reload. With no settings, it looks and behaves exactly as before.
+
 ## How it works
 
 This is a fork of the [They Live Adblocker](https://github.com/davmlaw/they_live_adblocker)
@@ -50,17 +68,21 @@ an efficient MV3 content blocker.
 
 uBO Lite's cosmetic filtering normally injects CSS like
 `selector { display: none !important }` to hide matched ad elements. The They
-Live fork patches those injection sites to instead apply a white-box mask with
-an `::after` overlay whose `content` is read from a data attribute, then walks
-the DOM (with a MutationObserver for late-loaded ads) to tag each matched
-element with a random phrase. This fork keeps that mechanic — and the stark
-black-on-white billboard typography — but swaps the dystopian slogans
-(OBEY, CONSUME…) for manifestation affirmations.
+Live fork patches those injection sites to instead apply a mask with an
+`::after` overlay, then walks the DOM (with a MutationObserver for late-loaded
+ads) to tag each matched element with a random phrase. This fork keeps that
+mechanic — and the stark billboard typography — but swaps the dystopian slogans
+(OBEY, CONSUME…) for manifestation affirmations, and paints each phrase as a
+self-fitting SVG (`background-size: contain`) so the text scales to any ad slot
+without overflowing. The content script reads user settings from
+`chrome.storage` and re-themes / re-tags live.
 
 The interesting files:
 
-- `chromium/js/scripting/they-live.js` — affirmation list, CSS generator, DOM tagging
+- `chromium/js/scripting/they-live.js` — packs, themes, SVG generator, DOM tagging, settings/counter/re-roll
 - `chromium/js/scripting/css-{specific,generic,procedural-api}.js` — call sites
+- `chromium/affirmations.html` + `chromium/js/affirmations.js` — the control panel
+- `chromium/js/yyc-popup.js` — the two fork buttons added to uBOL's popup
 
 ## Caveats
 
