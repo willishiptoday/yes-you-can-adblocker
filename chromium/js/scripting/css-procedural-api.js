@@ -51,15 +51,42 @@ const theyLiveStyleDecl = self.theyLiveStyleDecl || (() => {
         }
         return Math.abs(h);
     };
+    // Self-bounding SVG so `background-size: contain` fits any tile without
+    // overflow. Kept in sync with theyLiveSvgUrl in /js/scripting/they-live.js.
+    const xmlEsc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const layoutLines = (phrase) => {
+        const words = phrase.split(' ');
+        if ( words.length < 2 || phrase.length <= 11 ) { return [phrase]; }
+        const half = phrase.length / 2;
+        let first = '', i = 0;
+        while ( i < words.length - 1 && (first + ' ' + words[i]).trim().length <= half ) {
+            first = (first ? first + ' ' : '') + words[i];
+            i += 1;
+        }
+        if ( first === '' ) { first = words[i]; i += 1; }
+        const second = words.slice(i).join(' ');
+        return second ? [first, second] : [first];
+    };
+    const svgUrl = (phrase) => {
+        const lines = layoutLines(phrase);
+        const fontSize = 72, lineH = 80, charW = 46;
+        const cols = Math.max(...lines.map(l => l.length));
+        const W = Math.round(cols * charW + 60);
+        const H = Math.round(lines.length * lineH + 24);
+        const top = (H - lines.length * lineH) / 2;
+        const texts = lines.map((ln, i) =>
+            `<text x='${W / 2}' y='${top + lineH * (i + 0.5)}' ` +
+            `dominant-baseline='central' text-anchor='middle' ` +
+            `font-family='Impact,Arial Black,sans-serif' font-weight='900' ` +
+            `font-size='${fontSize}' letter-spacing='1' fill='black'>${xmlEsc(ln)}</text>`
+        ).join('');
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${W} ${H}'>${texts}</svg>`;
+        return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+    };
     const fallbackPhrase = PHRASES[Math.floor(Math.random() * PHRASES.length)];
     return function(seed) {
         const phrase = seed ? PHRASES[hashStr(seed) % PHRASES.length] : fallbackPhrase;
-        const svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 100' preserveAspectRatio='xMidYMid meet'>" +
-            "<rect width='100%' height='100%' fill='white'/>" +
-            "<text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' " +
-            "font-family='Impact,Arial Black,sans-serif' font-weight='900' font-size='56' " +
-            `letter-spacing='4' fill='black'>${phrase}</text></svg>`;
-        const url = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+        const url = `url("${svgUrl(phrase)}")`;
         return [
             'background-color:#fff !important',
             `background-image:${url} !important`,

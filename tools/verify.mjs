@@ -66,19 +66,30 @@ for (const [i, site] of SITES.entries()) {
             const els = [...document.querySelectorAll(`[${attr}]`)];
             return els.map(el => {
                 const r = el.getBoundingClientRect();
+                // The affirmation is painted by the ::after overlay as a fitted
+                // SVG scaled with `background-size: contain` — that's what keeps
+                // text from overflowing small tiles. Guard against regressing to
+                // viewport-sized text.
+                const after = getComputedStyle(el, '::after');
                 return {
                     phrase: el.getAttribute(attr),
                     visible: r.width >= 80 && r.height >= 40,
+                    fitted: /data:image\/svg/.test(after.backgroundImage) &&
+                            after.backgroundSize === 'contain',
                     top: r.top + scrollY,
                 };
             });
         }, ATTR);
         const visible = tiles.filter(t => t.visible);
-        console.log(`${name}: ${tiles.length} tagged, ${visible.length} visible tiles`);
+        const fitted = visible.filter(t => t.fitted).length;
+        console.log(`${name}: ${tiles.length} tagged, ${visible.length} visible tiles, ${fitted} fitted overlays`);
         console.log(`  phrases: ${[...new Set(tiles.map(t => t.phrase))].slice(0, 8).join(' | ')}`);
 
         if (visible.length === 0) {
             console.log(`  !! no visible tiles on ${name}`);
+            failures += 1;
+        } else if (fitted === 0) {
+            console.log(`  !! overlays not using fitted SVG on ${name} — text may overflow`);
             failures += 1;
         } else {
             // Bring the first decently-sized tile into view for the screenshot.

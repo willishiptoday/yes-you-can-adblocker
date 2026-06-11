@@ -10,6 +10,12 @@
     consumer that expects self.theyLiveCss / self.theyLiveAssign /
     self.theyLiveStyleDecl.
 
+    Each affirmation is painted as an SVG whose viewBox tightly bounds the
+    (optionally two-line) text, then drawn with `background-size: contain`, so
+    it scales to fit any ad slot — wide leaderboard or narrow skyscraper —
+    without ever overflowing. Sizing the text to the viewport instead of the
+    tile is what made small slots clip; don't reintroduce viewport units here.
+
 */
 
 (function uBOL_theyLive() {
@@ -51,6 +57,47 @@ const ATTR = 'data-ubol-they-live';
 
 const randomPhrase = () => PHRASES[Math.floor(Math.random() * PHRASES.length)];
 
+// ---- Phrase → self-bounding SVG billboard ---------------------------------
+//
+// theyLiveSvgUrl() is duplicated verbatim as an inline fallback in
+// css-procedural-api.js (which is sometimes injected without this global).
+// Change both together.
+
+const theyLiveSvgUrl = (() => {
+    const xmlEsc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // Break a phrase onto at most two balanced lines so longer affirmations
+    // use the tile's height instead of shrinking to a thin single line.
+    const layoutLines = (phrase) => {
+        const words = phrase.split(' ');
+        if ( words.length < 2 || phrase.length <= 11 ) { return [phrase]; }
+        const half = phrase.length / 2;
+        let first = '', i = 0;
+        while ( i < words.length - 1 && (first + ' ' + words[i]).trim().length <= half ) {
+            first = (first ? first + ' ' : '') + words[i];
+            i += 1;
+        }
+        if ( first === '' ) { first = words[i]; i += 1; }
+        const second = words.slice(i).join(' ');
+        return second ? [first, second] : [first];
+    };
+    return (phrase) => {
+        const lines = layoutLines(phrase);
+        const fontSize = 72, lineH = 80, charW = 46; // generous budget for Impact
+        const cols = Math.max(...lines.map(l => l.length));
+        const W = Math.round(cols * charW + 60);
+        const H = Math.round(lines.length * lineH + 24);
+        const top = (H - lines.length * lineH) / 2;
+        const texts = lines.map((ln, i) =>
+            `<text x='${W / 2}' y='${top + lineH * (i + 0.5)}' ` +
+            `dominant-baseline='central' text-anchor='middle' ` +
+            `font-family='Impact,Arial Black,sans-serif' font-weight='900' ` +
+            `font-size='${fontSize}' letter-spacing='1' fill='black'>${xmlEsc(ln)}</text>`
+        ).join('');
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${W} ${H}'>${texts}</svg>`;
+        return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+    };
+})();
+
 const MASK_BLOCK = `{
     position: relative !important;
     display: block !important;
@@ -62,27 +109,29 @@ const MASK_BLOCK = `{
     isolation: isolate !important;
 }`;
 
-// Styles common to every ::after overlay. Content comes from the data
-// attribute set by theyLiveAssign.
-const AFTER_STYLE = `
+// Common overlay box; the per-phrase rules below add the fitted SVG image.
+const OVERLAY_BASE = `
+    content: '' !important;
     position: absolute !important;
     inset: 0 !important;
     z-index: 2147483647 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: #fff !important;
-    color: #000 !important;
-    font-family: 'Impact', 'Arial Black', 'Helvetica Neue', sans-serif !important;
-    font-weight: 900 !important;
-    font-size: clamp(18px, 4vw, 64px) !important;
-    line-height: 1.1 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.08em !important;
-    text-align: center !important;
-    padding: 8px !important;
-    box-sizing: border-box !important;
+    background-color: #fff !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
     pointer-events: none !important;`;
+
+// One ::after rule per phrase, keyed on the data attribute theyLiveAssign sets.
+// CSS can't read an attribute value into a background-image, but there are only
+// ~30 phrases, so we emit them all once and let the cascade pick the match.
+let overlayRulesEmitted = false;
+const overlayRules = () => {
+    const base = `[${ATTR}]::after {${OVERLAY_BASE}\n}`;
+    const perPhrase = PHRASES.map(p =>
+        `[${ATTR}="${p}"]::after { background-image: url("${theyLiveSvgUrl(p)}") !important; }`
+    ).join('\n');
+    return `${base}\n${perPhrase}\n`;
+};
 
 self.theyLiveCss = function(selectorList) {
     if ( typeof selectorList !== 'string' || selectorList === '' ) { return ''; }
@@ -93,11 +142,9 @@ self.theyLiveCss = function(selectorList) {
     if ( selectors.length === 0 ) { return ''; }
 
     const maskRule = `${selectors.join(',\n')} ${MASK_BLOCK}`;
-    const afterSelectors = selectors.map(s => `${s}::after`).join(',\n');
-    const afterRule = `${afterSelectors} {
-    content: attr(${ATTR});${AFTER_STYLE}
-}`;
-    return `${maskRule}\n${afterRule}\n`;
+    if ( overlayRulesEmitted ) { return `${maskRule}\n`; }
+    overlayRulesEmitted = true;
+    return `${maskRule}\n${overlayRules()}`;
 };
 
 // Accumulate every selector we've ever been asked to tag. A single
@@ -153,18 +200,9 @@ self.theyLiveAssign = function(selectorList) {
 };
 
 // Procedural CSS pipeline can't emit pseudo-elements (it applies styles via
-// `[token]{...}` rules), so we render the phrase as an inline-SVG
-// background-image. `seed` lets call sites vary by selector; otherwise we
-// pick once at module-load time so a single page is consistent.
-const buildSvgUrl = (phrase) => {
-    const svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 100' preserveAspectRatio='xMidYMid meet'>" +
-        "<rect width='100%' height='100%' fill='white'/>" +
-        "<text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' " +
-        "font-family='Impact,Arial Black,sans-serif' font-weight='900' font-size='56' " +
-        `letter-spacing='4' fill='black'>${phrase}</text></svg>`;
-    return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
-};
-
+// `[token]{...}` rules), so we paint the fitted SVG straight onto the element
+// as a background. `seed` makes the phrase deterministic per selector;
+// otherwise we pick once at module-load time so a single page is consistent.
 const hashStr = (s) => {
     let h = 0;
     for ( let i = 0; i < s.length; i++ ) {
@@ -181,7 +219,7 @@ self.theyLiveStyleDecl = function(seed) {
         : defaultProceduralPhrase;
     return [
         'background-color:#fff !important',
-        `background-image:${buildSvgUrl(phrase)} !important`,
+        `background-image:url("${theyLiveSvgUrl(phrase)}") !important`,
         'background-repeat:no-repeat !important',
         'background-position:center !important',
         'background-size:contain !important',
