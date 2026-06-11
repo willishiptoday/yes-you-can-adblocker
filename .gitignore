@@ -8,4 +8,6 @@ chromium/log.txt
 
 # Web Store upload artifact produced by `pnpm pack`
 yes-you-can-adblocker-*.zip
+# stray `npm pack` output
+*.tgz
 .DS_Store
