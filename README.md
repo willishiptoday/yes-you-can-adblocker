@@ -80,6 +80,23 @@ The interesting files:
   by Raymond Hill — all the actual ad-blocking machinery (filter lists,
   declarativeNetRequest rulesets, cosmetic filtering engine) is his work
 
+## Privacy
+
+No data collection, no analytics, no remote servers — everything runs locally in
+your browser. Full statement in [PRIVACY.md](PRIVACY.md). Web Store listing copy
+and permission justifications are in [STORE-LISTING.md](STORE-LISTING.md).
+
+## Packaging for the Chrome Web Store
+
+```bash
+pnpm pack    # → yes-you-can-adblocker-<version>.zip (upload this)
+```
+
+`tools/pack.mjs` zips the *contents* of `chromium/` (manifest at the zip root)
+and excludes the Chrome-generated `_metadata/` and `log.txt`, which the Web
+Store rejects. Icons are original (`pnpm icons` regenerates them); none of
+uBlock Origin's artwork ships in this fork.
+
 ## License
 
 [GPL-3.0](LICENSE), same as upstream uBlock Origin / uBO Lite / They Live Adblocker.

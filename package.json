@@ -5,6 +5,8 @@
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
+    "icons": "node tools/make-icons.mjs",
+    "pack": "node tools/pack.mjs",
     "verify": "node tools/verify.mjs"
   },
   "devEngines": {

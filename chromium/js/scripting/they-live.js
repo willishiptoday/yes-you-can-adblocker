@@ -110,7 +110,6 @@ let pendingTag = false;
 
 const tagAll = () => {
     pendingTag = false;
-    let tagged = 0;
     for ( const selector of knownSelectors ) {
         let matched;
         try {
@@ -121,11 +120,7 @@ const tagAll = () => {
         for ( const el of matched ) {
             if ( el.hasAttribute(ATTR) ) { continue; }
             el.setAttribute(ATTR, randomPhrase());
-            tagged += 1;
         }
-    }
-    if ( tagged !== 0 ) {
-        console.log(`[they-live] tagged ${tagged} element(s) (${knownSelectors.size} selectors known)`);
     }
 };
 

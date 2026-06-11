@@ -1,1 +1,11 @@
 node_modules/
+
+# Chrome regenerates these when the extension is loaded unpacked; they must
+# never end up in the uploaded zip (`_metadata/` is a reserved folder name and
+# the Web Store rejects packages that contain it).
+chromium/_metadata/
+chromium/log.txt
+
+# Web Store upload artifact produced by `pnpm pack`
+yes-you-can-adblocker-*.zip
+.DS_Store

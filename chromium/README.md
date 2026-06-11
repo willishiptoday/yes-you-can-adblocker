@@ -1,34 +1,32 @@
-# How to build MV3 uBO Lite
+# Yes You Can Adblocker — extension package
 
-Instructions for reviewers.
+This folder **is** the unpacked Chrome MV3 extension. There is no build step for
+the fork itself: load this directory via `chrome://extensions` → Developer mode
+→ Load unpacked, or zip its contents for the Chrome Web Store.
 
-The following assumes a linux environment.
+- Project home & full source: <https://github.com/willishiptoday/yes-you-can-adblocker>
+- License: GPL-3.0 (see `LICENSE.txt`)
 
-1. Open Bash console
-2. `git clone  https://github.com/gorhill/uBlock.git`
-3. `cd uBlock`
-4. `git submodule init`
-5. `git submodule update`
-6. `make mv3-[platform]`, where `[platform]` is either `chromium`, `edge`, `firefox`, or `safari`
-7. This will fully build uBO Lite, and during the process filter lists will be downloaded from their respective remote servers
+## What's a fork vs. what's vendored
 
-Upon completion of the script, the resulting extension package will become present in:
+The fork-specific code (the affirmation mechanic) is unminified and lives in
+`js/scripting/they-live.js` plus its call sites in
+`js/scripting/css-{specific,generic,procedural-api}.js`.
 
-- Chromium: `dist/build/uBOLite.chromium`
-- Edge: `dist/build/uBOLite.edge`
-- Firefox: `dist/build/uBOLite.firefox`
-- Safari: `dist/build/uBOLite.safari`
+Everything else here is [uBlock Origin Lite](https://github.com/uBlockOrigin/uBOL-home)
+by Raymond Hill, largely unmodified: the service worker, the cosmetic-filtering
+engine, the UI, the locales, and the `rulesets/` blocking data.
 
-The folder `dist/build/mv3-data` will cache data fetched from remote servers, so as to avoid fetching repeatedly from remote servers with repeated build commands. Use `make cleanassets` to remove all locally cached filter lists if you want to build with latest versions of filter lists.
+## Regenerating the blocking rulesets (reviewers)
 
-The file `dist/build/uBOLite.[platform]/log.txt` will contain information about what happened during the build process.
+The `declarativeNetRequest` rulesets under `rulesets/` are compiled from the
+open-source uBlock Origin / uAssets filter lists by uBlock Origin's MV3 build
+(`make mv3-chromium` in <https://github.com/gorhill/uBlock>), then vendored
+here. They are not authored by hand and are not fetched at runtime.
 
-The entry in the `Makefile` which implement the build process is `tools/make-mv3.sh [platform]`.[1] This Bash script copy various files from uBlock Origin branch and MV3-specific branch into a single folder which will be the final extension package.
+## Do not commit / ship
 
-Notably, `tools/make-mv3.sh [platform]` calls a Nodejs script which purpose is to convert the filter lists into various rulesets to be used in a declarative way. The Nodejs version required is 17.5.0 or above.
-
-All the final rulesets are present in the `dist/build/uBOLite.[platform]/rulesets` in the final extension package.
-
----
-
-[1] https://github.com/gorhill/uBlock/blob/c4d324362fdb95ff8ef20f0b18f42f0eec955433/tools/make-mv3.sh<br>
+Chrome writes a `_metadata/` folder and a `log.txt` into this directory when it
+loads the extension unpacked. Both are git-ignored and **must not** be included
+in the uploaded zip — `_metadata` is a reserved folder name and the Web Store
+rejects packages that contain it.
